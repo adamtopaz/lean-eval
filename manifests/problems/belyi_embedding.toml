@@ -4,3 +4,4 @@ test = false
 module = "LeanEval.NumberTheory.BelyiEmbedding"
 holes = ["belyi_embedding"]
 submitter = "Adam Topaz"
+notes = "We call this the Belyi embedding because its existence is a consequence of Belyi's theorem."

@@ -10,6 +10,8 @@ fundamental group of `ℙ¹ \ {0, 1, ∞}` gives an embedding
 
 `Gal(ℚ̄/ℚ) ↪ Out(\widehat{F}_2)`.
 
+We call this the **Belyi embedding** because its existence is a consequence of Belyi's theorem.
+
 Here `\widehat{F}_2` is modeled as the profinite completion of the free group on two
 generators. The outer automorphism group is the categorical automorphism group of this profinite
 group modulo its subgroup of inner automorphisms.
@@ -91,8 +93,9 @@ end ProfiniteGrp
 abbrev freeProfiniteGroupOnTwoGenerators : ProfiniteGrp :=
   ProfiniteGrp.ProfiniteCompletion.completion (.mk (FreeGroup (Fin 2)))
 
-/-- The absolute Galois group of `ℚ` embeds in the outer automorphism group of the free profinite
-group on two generators. -/
+/-- The **Belyi embedding**: the absolute Galois group of `ℚ` embeds in the outer automorphism
+group of the free profinite group on two generators. Its existence is a consequence of Belyi's
+theorem. -/
 @[eval_problem]
 theorem belyi_embedding :
     ∃ ρ : Field.absoluteGaloisGroup ℚ →*
