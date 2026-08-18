@@ -25,14 +25,6 @@ universe u
 
 namespace ProfiniteGrp
 
-private lemma aut_one_hom_apply (G : ProfiniteGrp.{u}) (x : G) : (1 : Aut G).hom x = x := rfl
-
-private lemma aut_mul_hom_apply (G : ProfiniteGrp.{u}) (α β : Aut G) (x : G) :
-    (α * β).hom x = α.hom (β.hom x) := rfl
-
-private lemma aut_inv_hom_apply (G : ProfiniteGrp.{u}) (α : Aut G) (x : G) :
-    α⁻¹.hom x = α.inv x := rfl
-
 /-- Conjugation by an element of a profinite group, as a continuous homomorphism. -/
 @[simps! toFun]
 def conjugationHom (G : ProfiniteGrp.{u}) (g : G) : G →ₜ* G where
@@ -41,7 +33,7 @@ def conjugationHom (G : ProfiniteGrp.{u}) (g : G) : G →ₜ* G where
 
 /-- Conjugation by an element of a profinite group, as an automorphism in `ProfiniteGrp`. -/
 @[simps hom]
-def conjugationIso (G : ProfiniteGrp.{u}) (g : G) : Aut G where
+def conjugationIso (G : ProfiniteGrp.{u}) (g : G) : G ≅ G where
   hom := ProfiniteGrp.ofHom (conjugationHom G g)
   inv := ProfiniteGrp.ofHom (conjugationHom G g⁻¹)
   hom_inv_id := by
@@ -55,13 +47,14 @@ def conjugationIso (G : ProfiniteGrp.{u}) (g : G) : Aut G where
 def innerAutomorphism (G : ProfiniteGrp.{u}) : G →* Aut G where
   toFun := conjugationIso G
   map_one' := by
-    apply Aut.ext
+    change conjugationIso G 1 = Iso.refl G
     ext
-    simp [aut_one_hom_apply]
+    simp
   map_mul' g h := by
-    apply Aut.ext
+    change conjugationIso G (g * h) =
+      (conjugationIso G h).trans (conjugationIso G g)
     ext
-    simp [aut_mul_hom_apply, mul_assoc]
+    simp [mul_assoc]
 
 /-- The inner automorphisms form a normal subgroup of the automorphism group. -/
 instance innerAutomorphismRangeNormal (G : ProfiniteGrp.{u}) :
@@ -70,9 +63,10 @@ instance innerAutomorphismRangeNormal (G : ProfiniteGrp.{u}) :
     rintro _ ⟨g, rfl⟩ α
     refine ⟨α.hom g, ?_⟩
     apply Aut.ext
+    change (conjugationIso G (α.hom g)).hom =
+      α.inv ≫ (conjugationIso G g).hom ≫ α.hom
     ext x
-    simpa [innerAutomorphism, aut_mul_hom_apply, aut_inv_hom_apply, mul_assoc] using
-      (ProfiniteGrp.hom_inv_apply α x).symm
+    simpa [mul_assoc] using (ProfiniteGrp.hom_inv_apply α x).symm
 
 /-- The outer automorphism group of a profinite group: its categorical automorphism group modulo
 its inner automorphisms. -/
