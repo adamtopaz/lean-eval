@@ -1,7 +1,9 @@
 id = "belyi_embedding"
-title = "The absolute Galois group of the rationals embeds in the outer automorphism group of the free profinite group"
+title = "The absolute Galois group of the rationals embeds in the outer automorphism group of the free profinite group on two generators"
 test = false
 module = "LeanEval.NumberTheory.BelyiEmbedding"
 holes = ["belyi_embedding"]
 submitter = "Adam Topaz"
-notes = "We call this the Belyi embedding because its existence is a consequence of Belyi's theorem."
+notes = "We call this the Belyi embedding because its existence is a consequence of Belyi's theorem. The standard result is a continuous injection. This formal statement records the underlying abstract group embedding because no topology is placed on OuterAutomorphismGroup; its categorical automorphisms are nevertheless exactly the continuous group automorphisms with continuous inverse."
+source = "Robert A. Kucharczyk, 'On copies of the absolute Galois group in Out(F̂₂)', Proc. Amer. Math. Soc. 144 (2016), 2351–2359, Introduction, equation (1) and the corollary attributed to Belyi. https://doi.org/10.1090/proc/12917; https://arxiv.org/abs/1210.2349"
+informal_solution = "Use the arithmetic étale fundamental-group exact sequence for X = ℙ¹_ℚ minus {0, 1, ∞} to obtain the outer representation G_ℚ → Out(π₁(X_{ℚ̄})). The geometric fundamental group is the free profinite group F̂₂. Belyi's theorem makes the outer action faithful: every algebraic curve over ℚ̄ is birational to a finite étale cover of X_{ℚ̄}, while such covers correspond to conjugacy classes of open subgroups of F̂₂. Hence the outer representation is injective."

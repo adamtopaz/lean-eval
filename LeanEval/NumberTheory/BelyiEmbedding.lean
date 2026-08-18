@@ -5,16 +5,31 @@ import EvalTools.Markers
 /-!
 # The absolute Galois group of the rationals embeds in `Out(\widehat{F}_2)`
 
-The faithful outer action of the absolute Galois group of `ℚ` on the geometric étale
-fundamental group of `ℙ¹ \ {0, 1, ∞}` gives an embedding
+The arithmetic étale fundamental-group sequence for `X = ℙ¹_ℚ \ {0, 1, ∞}` induces a
+continuous outer representation
 
-`Gal(ℚ̄/ℚ) ↪ Out(\widehat{F}_2)`.
+`Gal(ℚ̄/ℚ) → Out(π₁(X_{ℚ̄})) ≅ Out(\widehat{F}_2)`.
 
-We call this the **Belyi embedding** because its existence is a consequence of Belyi's theorem.
+Belyi's theorem implies that this representation is injective: finite étale covers of `X_{ℚ̄}`
+correspond to conjugacy classes of open subgroups of `\widehat{F}_2`, and every algebraic curve
+over `ℚ̄` is birational to such a cover. We therefore call the resulting injection
 
-Here `\widehat{F}_2` is modeled as the profinite completion of the free group on two
-generators. The outer automorphism group is the categorical automorphism group of this profinite
-group modulo its subgroup of inner automorphisms.
+`Gal(ℚ̄/ℚ) ↪ Out(\widehat{F}_2)`
+
+the **Belyi embedding**.
+
+Here `\widehat{F}_2` is modeled as the profinite completion of the free group on two generators.
+The outer automorphism group is the categorical automorphism group of this profinite group modulo
+its subgroup of inner automorphisms. Thus its automorphisms and their inverses are continuous. The
+formal statement records the underlying injective group homomorphism; it does not record continuity
+of the Belyi embedding because no topology is placed on `OuterAutomorphismGroup` here.
+
+## Reference
+
+Robert A. Kucharczyk, *On copies of the absolute Galois group in* `Out(\widehat{F}_2)`,
+Proceedings of the American Mathematical Society **144** (2016), 2351–2359,
+[doi:10.1090/proc/12917](https://doi.org/10.1090/proc/12917), Introduction, equation (1) and the
+corollary attributed to Belyi.
 -/
 
 set_option autoImplicit false
