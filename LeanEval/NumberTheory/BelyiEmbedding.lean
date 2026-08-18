@@ -44,29 +44,24 @@ def conjugationIso (G : ProfiniteGrp.{u}) (g : G) : G ≅ G where
     simp [mul_assoc]
 
 /-- Conjugation by elements of a profinite group, regarded as categorical automorphisms. -/
-def innerAutomorphism (G : ProfiniteGrp.{u}) : G →* Aut G where
-  toFun := conjugationIso G
-  map_one' := by
-    change conjugationIso G 1 = Iso.refl G
-    ext
-    simp
-  map_mul' g h := by
-    change conjugationIso G (g * h) =
-      (conjugationIso G h).trans (conjugationIso G g)
-    ext
-    simp [mul_assoc]
+def innerAutomorphism (G : ProfiniteGrp.{u}) : G →* Aut G :=
+  MonoidHom.mk' (conjugationIso G) fun g h ↦
+    Iso.ext (α := conjugationIso G (g * h))
+      (β := (conjugationIso G h).trans (conjugationIso G g)) (by
+        ext
+        simp [mul_assoc])
 
 /-- The inner automorphisms form a normal subgroup of the automorphism group. -/
 instance innerAutomorphismRangeNormal (G : ProfiniteGrp.{u}) :
     (innerAutomorphism G).range.Normal where
   conj_mem := by
-    rintro _ ⟨g, rfl⟩ α
+    rintro _ ⟨g, rfl⟩ (α : G ≅ G)
     refine ⟨α.hom g, ?_⟩
-    apply Aut.ext
-    change (conjugationIso G (α.hom g)).hom =
-      α.inv ≫ (conjugationIso G g).hom ≫ α.hom
+    apply Iso.ext (α := conjugationIso G (α.hom g))
+      (β := α.symm.trans ((conjugationIso G g).trans α))
+    rw [Iso.trans_hom, Iso.symm_hom, Iso.trans_hom]
     ext x
-    simpa [mul_assoc] using (ProfiniteGrp.hom_inv_apply α x).symm
+    simp [mul_assoc]
 
 /-- The outer automorphism group of a profinite group: its categorical automorphism group modulo
 its inner automorphisms. -/
