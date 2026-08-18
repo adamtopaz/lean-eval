@@ -3,7 +3,7 @@ import Mathlib.Topology.Algebra.Category.ProfiniteGrp.Completion
 import EvalTools.Markers
 
 /-!
-# The absolute Galois group inside `Out(\widehat{F}_2)`
+# The absolute Galois group of the rationals embeds in `Out(\widehat{F}_2)`
 
 The faithful outer action of the absolute Galois group of `ℚ` on the geometric étale
 fundamental group of `ℙ¹ \ {0, 1, ∞}` gives an embedding
