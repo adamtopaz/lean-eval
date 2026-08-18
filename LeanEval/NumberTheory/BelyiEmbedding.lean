@@ -25,48 +25,14 @@ universe u
 
 namespace ProfiniteGrp
 
-/-- Conjugation by an element of a profinite group, as a continuous homomorphism. -/
-@[simps! toFun]
-def conjugationHom (G : ProfiniteGrp.{u}) (g : G) : G →ₜ* G where
-  toMonoidHom := (MulAut.conj g).toMonoidHom
-  continuous_toFun := IsTopologicalGroup.continuous_conj g
-
 /-- Conjugation by an element of a profinite group, as an automorphism in `ProfiniteGrp`. -/
-@[simps hom]
-def conjugationIso (G : ProfiniteGrp.{u}) (g : G) : G ≅ G where
-  hom := ProfiniteGrp.ofHom (conjugationHom G g)
-  inv := ProfiniteGrp.ofHom (conjugationHom G g⁻¹)
-  hom_inv_id := by
-    ext x
-    simp [mul_assoc]
-  inv_hom_id := by
-    ext x
-    simp [mul_assoc]
+def conjugationIso (G : ProfiniteGrp.{u}) (g : G) : Aut G :=
+  ProfiniteGrp.ContinuousMulEquiv.toProfiniteGrpIso
+    (ContinuousMulEquiv.mk (MulAut.conj g) (IsTopologicalGroup.continuous_conj g))
 
-/-- Conjugation by elements of a profinite group, regarded as categorical automorphisms. -/
-def innerAutomorphism (G : ProfiniteGrp.{u}) : G →* Aut G :=
-  MonoidHom.mk' (conjugationIso G) fun g h ↦
-    Iso.ext (α := conjugationIso G (g * h))
-      (β := (conjugationIso G h).trans (conjugationIso G g)) (by
-        ext
-        simp [mul_assoc])
-
-/-- The inner automorphisms form a normal subgroup of the automorphism group. -/
-instance innerAutomorphismRangeNormal (G : ProfiniteGrp.{u}) :
-    (innerAutomorphism G).range.Normal where
-  conj_mem := by
-    rintro _ ⟨g, rfl⟩ (α : G ≅ G)
-    refine ⟨α.hom g, ?_⟩
-    apply Iso.ext (α := conjugationIso G (α.hom g))
-      (β := α.symm.trans ((conjugationIso G g).trans α))
-    rw [Iso.trans_hom, Iso.symm_hom, Iso.trans_hom]
-    ext x
-    simp [mul_assoc]
-
-/-- The outer automorphism group of a profinite group: its categorical automorphism group modulo
-its inner automorphisms. -/
+/-- The outer automorphism group of a profinite group. -/
 abbrev OuterAutomorphismGroup (G : ProfiniteGrp.{u}) :=
-  Aut G ⧸ (innerAutomorphism G).range
+  Aut G ⧸ Subgroup.normalClosure (Set.range (conjugationIso G))
 
 end ProfiniteGrp
 
