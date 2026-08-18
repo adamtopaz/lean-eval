@@ -1,0 +1,6 @@
+id = "belyi_embedding"
+title = "The absolute Galois group inside the outer automorphism group of the free profinite group"
+test = false
+module = "LeanEval.NumberTheory.BelyiEmbedding"
+holes = ["belyi_embedding"]
+submitter = "Adam Topaz"
