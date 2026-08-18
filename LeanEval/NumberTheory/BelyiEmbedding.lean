@@ -21,21 +21,16 @@ namespace LeanEval.NumberTheory.BelyiEmbedding
 
 open CategoryTheory
 
-noncomputable section
-
 universe u
 
 namespace ProfiniteGrp
 
-@[simp]
-lemma aut_one_hom_apply (G : ProfiniteGrp.{u}) (x : G) : (1 : Aut G).hom x = x := rfl
+private lemma aut_one_hom_apply (G : ProfiniteGrp.{u}) (x : G) : (1 : Aut G).hom x = x := rfl
 
-@[simp]
-lemma aut_mul_hom_apply (G : ProfiniteGrp.{u}) (α β : Aut G) (x : G) :
+private lemma aut_mul_hom_apply (G : ProfiniteGrp.{u}) (α β : Aut G) (x : G) :
     (α * β).hom x = α.hom (β.hom x) := rfl
 
-@[simp]
-lemma aut_inv_hom_apply (G : ProfiniteGrp.{u}) (α : Aut G) (x : G) :
+private lemma aut_inv_hom_apply (G : ProfiniteGrp.{u}) (α : Aut G) (x : G) :
     α⁻¹.hom x = α.inv x := rfl
 
 /-- Conjugation by an element of a profinite group, as a continuous homomorphism. -/
@@ -45,7 +40,7 @@ def conjugationHom (G : ProfiniteGrp.{u}) (g : G) : G →ₜ* G where
   continuous_toFun := IsTopologicalGroup.continuous_conj g
 
 /-- Conjugation by an element of a profinite group, as an automorphism in `ProfiniteGrp`. -/
-@[simps]
+@[simps hom]
 def conjugationIso (G : ProfiniteGrp.{u}) (g : G) : Aut G where
   hom := ProfiniteGrp.ofHom (conjugationHom G g)
   inv := ProfiniteGrp.ofHom (conjugationHom G g⁻¹)
@@ -57,17 +52,16 @@ def conjugationIso (G : ProfiniteGrp.{u}) (g : G) : Aut G where
     simp [mul_assoc]
 
 /-- Conjugation by elements of a profinite group, regarded as categorical automorphisms. -/
-@[simps]
 def innerAutomorphism (G : ProfiniteGrp.{u}) : G →* Aut G where
   toFun := conjugationIso G
   map_one' := by
     apply Aut.ext
     ext
-    simp
+    simp [aut_one_hom_apply]
   map_mul' g h := by
     apply Aut.ext
     ext
-    simp [mul_assoc]
+    simp [aut_mul_hom_apply, mul_assoc]
 
 /-- The inner automorphisms form a normal subgroup of the automorphism group. -/
 instance innerAutomorphismRangeNormal (G : ProfiniteGrp.{u}) :
@@ -77,7 +71,8 @@ instance innerAutomorphismRangeNormal (G : ProfiniteGrp.{u}) :
     refine ⟨α.hom g, ?_⟩
     apply Aut.ext
     ext x
-    simpa [mul_assoc] using (ProfiniteGrp.hom_inv_apply α x).symm
+    simpa [innerAutomorphism, aut_mul_hom_apply, aut_inv_hom_apply, mul_assoc] using
+      (ProfiniteGrp.hom_inv_apply α x).symm
 
 /-- The outer automorphism group of a profinite group: its categorical automorphism group modulo
 its inner automorphisms. -/
@@ -100,7 +95,5 @@ theorem belyi_embedding :
       ProfiniteGrp.OuterAutomorphismGroup freeProfiniteGroupOnTwoGenerators,
       Function.Injective ρ := by
   sorry
-
-end
 
 end LeanEval.NumberTheory.BelyiEmbedding
