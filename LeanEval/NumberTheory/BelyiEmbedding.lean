@@ -11,8 +11,8 @@ fundamental group of `ℙ¹ \ {0, 1, ∞}` gives an embedding
 `Gal(ℚ̄/ℚ) ↪ Out(\widehat{F}_2)`.
 
 Here `\widehat{F}_2` is modeled as the profinite completion of the free group on two
-generators. The definitions below model the outer automorphism group of a profinite group as
-the group of continuous automorphisms modulo its subgroup of inner automorphisms.
+generators. The outer automorphism group is the categorical automorphism group of this profinite
+group modulo its subgroup of inner automorphisms.
 -/
 
 set_option autoImplicit false
@@ -27,31 +27,47 @@ universe u
 
 namespace ProfiniteGrp
 
+@[simp]
+lemma aut_one_hom_apply (G : ProfiniteGrp.{u}) (x : G) : (1 : Aut G).hom x = x := rfl
+
+@[simp]
+lemma aut_mul_hom_apply (G : ProfiniteGrp.{u}) (α β : Aut G) (x : G) :
+    (α * β).hom x = α.hom (β.hom x) := rfl
+
+@[simp]
+lemma aut_inv_hom_apply (G : ProfiniteGrp.{u}) (α : Aut G) (x : G) :
+    α⁻¹.hom x = α.inv x := rfl
+
+/-- Conjugation by an element of a profinite group, as a continuous homomorphism. -/
+@[simps! (attr := simp) toFun]
+def conjugationHom (G : ProfiniteGrp.{u}) (g : G) : G →ₜ* G where
+  toMonoidHom := (MulAut.conj g).toMonoidHom
+  continuous_toFun := IsTopologicalGroup.continuous_conj g
+
 /-- Conjugation by an element of a profinite group, as an automorphism in `ProfiniteGrp`. -/
-def conjugationIso (G : ProfiniteGrp.{u}) (g : G) : Aut G :=
-  ProfiniteGrp.ContinuousMulEquiv.toProfiniteGrpIso {
-    toMulEquiv := MulAut.conj g
-    continuous_toFun := by
-      change Continuous (fun x : G => g * x * g⁻¹)
-      fun_prop
-    continuous_invFun := by
-      change Continuous (fun x : G => g⁻¹ * x * g)
-      fun_prop
-  }
+@[simps (attr := simp)]
+def conjugationIso (G : ProfiniteGrp.{u}) (g : G) : Aut G where
+  hom := ProfiniteGrp.ofHom (conjugationHom G g)
+  inv := ProfiniteGrp.ofHom (conjugationHom G g⁻¹)
+  hom_inv_id := by
+    ext x
+    simp [mul_assoc]
+  inv_hom_id := by
+    ext x
+    simp [mul_assoc]
 
 /-- Conjugation by elements of a profinite group, regarded as categorical automorphisms. -/
+@[simps (attr := simp)]
 def innerAutomorphism (G : ProfiniteGrp.{u}) : G →* Aut G where
   toFun := conjugationIso G
   map_one' := by
     apply Aut.ext
-    ext x
-    change (1 : G) * x * (1 : G)⁻¹ = x
+    ext
     simp
   map_mul' g h := by
     apply Aut.ext
-    ext x
-    change (g * h) * x * (g * h)⁻¹ = g * (h * x * h⁻¹) * g⁻¹
-    group
+    ext
+    simp [mul_assoc]
 
 /-- The inner automorphisms form a normal subgroup of the automorphism group. -/
 instance innerAutomorphismRangeNormal (G : ProfiniteGrp.{u}) :
@@ -61,10 +77,7 @@ instance innerAutomorphismRangeNormal (G : ProfiniteGrp.{u}) :
     refine ⟨α.hom g, ?_⟩
     apply Aut.ext
     ext x
-    change G ≅ G at α
-    change α.hom g * x * (α.hom g)⁻¹ = α.hom (g * α.inv x * g⁻¹)
-    simp only [map_mul, map_inv]
-    rw [ProfiniteGrp.hom_inv_apply]
+    simpa [mul_assoc] using (ProfiniteGrp.hom_inv_apply (show G ≅ G from α) x).symm
 
 /-- The outer automorphism group of a profinite group: its categorical automorphism group modulo
 its inner automorphisms. -/
