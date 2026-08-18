@@ -17,8 +17,6 @@ generators. The outer automorphism group is the categorical automorphism group o
 group modulo its subgroup of inner automorphisms.
 -/
 
-set_option autoImplicit false
-
 namespace LeanEval.NumberTheory.BelyiEmbedding
 
 open CategoryTheory
@@ -41,13 +39,13 @@ lemma aut_inv_hom_apply (G : ProfiniteGrp.{u}) (α : Aut G) (x : G) :
     α⁻¹.hom x = α.inv x := rfl
 
 /-- Conjugation by an element of a profinite group, as a continuous homomorphism. -/
-@[simps! (attr := simp) toFun]
+@[simps! toFun]
 def conjugationHom (G : ProfiniteGrp.{u}) (g : G) : G →ₜ* G where
   toMonoidHom := (MulAut.conj g).toMonoidHom
   continuous_toFun := IsTopologicalGroup.continuous_conj g
 
 /-- Conjugation by an element of a profinite group, as an automorphism in `ProfiniteGrp`. -/
-@[simps (attr := simp)]
+@[simps]
 def conjugationIso (G : ProfiniteGrp.{u}) (g : G) : Aut G where
   hom := ProfiniteGrp.ofHom (conjugationHom G g)
   inv := ProfiniteGrp.ofHom (conjugationHom G g⁻¹)
@@ -59,7 +57,7 @@ def conjugationIso (G : ProfiniteGrp.{u}) (g : G) : Aut G where
     simp [mul_assoc]
 
 /-- Conjugation by elements of a profinite group, regarded as categorical automorphisms. -/
-@[simps (attr := simp)]
+@[simps]
 def innerAutomorphism (G : ProfiniteGrp.{u}) : G →* Aut G where
   toFun := conjugationIso G
   map_one' := by
