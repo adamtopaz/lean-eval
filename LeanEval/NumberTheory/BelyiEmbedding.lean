@@ -77,7 +77,7 @@ instance innerAutomorphismRangeNormal (G : ProfiniteGrp.{u}) :
     refine ⟨α.hom g, ?_⟩
     apply Aut.ext
     ext x
-    simpa [mul_assoc] using (ProfiniteGrp.hom_inv_apply (show G ≅ G from α) x).symm
+    simpa [mul_assoc] using (ProfiniteGrp.hom_inv_apply α x).symm
 
 /-- The outer automorphism group of a profinite group: its categorical automorphism group modulo
 its inner automorphisms. -/
