@@ -24,13 +24,36 @@ universe u
 namespace ProfiniteGrp
 
 /-- Conjugation by an element of a profinite group, as an automorphism in `ProfiniteGrp`. -/
-def conjugationIso (G : ProfiniteGrp.{u}) (g : G) : Aut G :=
+def conjugationIso (G : ProfiniteGrp.{u}) (g : G) : G ≅ G :=
   ContinuousMulEquiv.toProfiniteGrpIso <|
     .mk (MulAut.conj g) <| IsTopologicalGroup.continuous_conj g
 
+@[simp] private lemma conjugationIso_hom_apply (G : ProfiniteGrp.{u}) (g x : G) :
+    (conjugationIso G g).hom x = g * x * g⁻¹ := rfl
+
+/-- Conjugation by elements of a profinite group. -/
+def innerAutomorphism (G : ProfiniteGrp.{u}) : G →* Aut G :=
+  MonoidHom.mk' (conjugationIso G) fun g h ↦
+    Iso.ext (α := conjugationIso G (g * h))
+      (β := (conjugationIso G h).trans (conjugationIso G g)) (by
+        ext
+        simp [mul_assoc])
+
+/-- The inner automorphisms form a normal subgroup of the automorphism group. -/
+instance innerAutomorphismRangeNormal (G : ProfiniteGrp.{u}) :
+    (innerAutomorphism G).range.Normal where
+  conj_mem := by
+    rintro _ ⟨g, rfl⟩ (α : G ≅ G)
+    refine ⟨α.hom g, ?_⟩
+    apply Iso.ext (α := conjugationIso G (α.hom g))
+      (β := α.symm.trans ((conjugationIso G g).trans α))
+    rw [Iso.trans_hom, Iso.symm_hom, Iso.trans_hom]
+    ext x
+    simp [mul_assoc]
+
 /-- The outer automorphism group of a profinite group. -/
 abbrev OuterAutomorphismGroup (G : ProfiniteGrp.{u}) :=
-  Aut G ⧸ (Subgroup.normalClosure <| Set.range <| conjugationIso G)
+  Aut G ⧸ (innerAutomorphism G).range
 
 /-- The free profinite group on two generators, modeled as the profinite completion of the
 (discrete) free group on `Fin 2`. -/
