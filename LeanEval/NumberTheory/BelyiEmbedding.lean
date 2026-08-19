@@ -17,8 +17,6 @@ generators. The outer automorphism group is the categorical automorphism group o
 group modulo its subgroup of inner automorphisms.
 -/
 
-namespace LeanEval.NumberTheory.BelyiEmbedding
-
 open CategoryTheory
 
 universe u
@@ -27,27 +25,30 @@ namespace ProfiniteGrp
 
 /-- Conjugation by an element of a profinite group, as an automorphism in `ProfiniteGrp`. -/
 def conjugationIso (G : ProfiniteGrp.{u}) (g : G) : Aut G :=
-  ProfiniteGrp.ContinuousMulEquiv.toProfiniteGrpIso <|
+  ContinuousMulEquiv.toProfiniteGrpIso <|
     .mk (MulAut.conj g) <| IsTopologicalGroup.continuous_conj g
 
 /-- The outer automorphism group of a profinite group. -/
 abbrev OuterAutomorphismGroup (G : ProfiniteGrp.{u}) :=
   Aut G ⧸ (Subgroup.normalClosure <| Set.range <| conjugationIso G)
 
-end ProfiniteGrp
-
 /-- The free profinite group on two generators, modeled as the profinite completion of the
 (discrete) free group on `Fin 2`. -/
-abbrev freeProfiniteGroupOnTwoGenerators : ProfiniteGrp :=
-  ProfiniteGrp.ProfiniteCompletion.completion <| .mk <| FreeGroup (Fin 2)
+abbrev freeOnTwoGenerators : ProfiniteGrp :=
+  ProfiniteCompletion.completion <| .mk <| FreeGroup (Fin 2)
+
+end ProfiniteGrp
+
+namespace LeanEval.NumberTheory.BelyiEmbedding
+
+open ProfiniteGrp
 
 /-- The **Belyi embedding**: the absolute Galois group of `ℚ` embeds in the outer automorphism
 group of the free profinite group on two generators. Its existence is a consequence of Belyi's
 theorem. -/
 @[eval_problem]
 theorem belyi_embedding :
-    ∃ ρ : Field.absoluteGaloisGroup ℚ →*
-      ProfiniteGrp.OuterAutomorphismGroup freeProfiniteGroupOnTwoGenerators,
+    ∃ ρ : Field.absoluteGaloisGroup ℚ →* OuterAutomorphismGroup freeOnTwoGenerators,
       Function.Injective ρ := by
   sorry
 
